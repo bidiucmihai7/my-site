@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ForgeBeat Gym</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Roboto:wght@400;600&family=Roboto+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #eef1f4; --surface: #ffffff; --ink: #14202b; --muted: #556677; --line: #d5dce3;
+  --accent: #f2d13d; --on-accent: #14202b; --btn-bg: #14202b; --btn-fg: #ffffff;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e151c; --surface: #16212b; --ink: #e9eef3; --muted: #93a3b3; --line: #263544;
+    --btn-bg: #f2d13d; --btn-fg: #14202b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e151c; --surface: #16212b; --ink: #e9eef3; --muted: #93a3b3; --line: #263544;
+  --btn-bg: #f2d13d; --btn-fg: #14202b; color-scheme: dark;
+}
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font: 17px/1.6 "Barlow", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif; padding: 1.25rem 1.25rem 3rem; }
+.wrap { max-width: 1040px; margin: 0 auto; }
+[hidden] { display: none !important; }
+h1, h2, h3 { font-family: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", Impact, sans-serif; line-height: 1.05; letter-spacing: .005em; }
+h2 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: .6rem; }
+h3 { font-size: 1.5rem; margin-bottom: .35rem; }
+p { max-width: 62ch; }
+.muted { color: var(--muted); }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+ 
+/* nav */
+.nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--ink); margin-bottom: 2.5rem; }
+.brand { font-family: "Barlow Condensed", Impact, sans-serif; font-weight: 700; font-size: 1.9rem; text-decoration: none; color: var(--ink); line-height: 1; }
+.brand i { font-style: normal; background: var(--accent); color: var(--on-accent); padding: 0 .3rem; margin-left: .1rem; }
+.nav ul { display: flex; flex-wrap: wrap; gap: .25rem; list-style: none; }
+.nav a.link { display: block; text-decoration: none; color: var(--ink); font-weight: 600; padding: .4rem .8rem; border-radius: 6px; }
+.nav a.link:hover { background: var(--line); }
+.nav a.link[aria-current="page"] { background: var(--accent); color: var(--on-accent); }
+.langs { display: flex; border: 2px solid var(--ink); border-radius: 6px; overflow: hidden; }
+.langs button { font: inherit; font-weight: 600; cursor: pointer; background: transparent; color: var(--ink); border: 0; padding: .3rem .65rem; }
+.langs button:hover { background: var(--line); }
+.langs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+ 
+/* buttons */
+.btn { display: inline-block; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; background: var(--btn-bg); color: var(--btn-fg); border: 2px solid var(--btn-bg); border-radius: 6px; padding: .75rem 1.4rem; }
+.btn:hover { opacity: .88; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+.row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.6rem; }
+ 
+/* home */
+.hero h1 { font-size: clamp(2.8rem, 9vw, 6rem); font-weight: 700; max-width: 14ch; }
+.hero p { margin-top: 1.1rem; font-size: 1.15rem; color: var(--muted); }
+.pulse { display: block; width: 100%; height: 90px; margin: 2.5rem 0 .5rem; overflow: visible; }
+.pulse path { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 2.2s ease-out .2s forwards; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .pulse path { animation: none; stroke-dashoffset: 0; } }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 2rem; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.3rem; }
+.card p { color: var(--muted); font-size: .98rem; }
+ 
+/* tables */
+.tablewrap { overflow-x: auto; margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; min-width: 520px; }
+th, td { text-align: left; padding: .85rem 1.1rem; border-bottom: 1px solid var(--line); }
+th { color: var(--muted); font-weight: 600; font-size: .9rem; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; }
+ 
+/* pricing */
+.plan { display: flex; flex-direction: column; }
+.plan.pop { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.plan.pop p, .plan.pop .per { color: var(--on-accent); }
+.price { font-family: "Barlow Condensed", Impact, sans-serif; font-size: 3.2rem; font-weight: 700; line-height: 1; margin: .5rem 0; }
+.per { font-size: 1rem; font-weight: 400; color: var(--muted); font-family: "Barlow", sans-serif; }
+.plan ul { list-style: none; margin: 1rem 0 1.5rem; display: grid; gap: .45rem; flex: 1; }
+.plan li::before { content: "+ "; font-weight: 700; }
+.plan.pop .btn { background: var(--on-accent); color: var(--accent); border-color: var(--on-accent); }
+.tag { align-self: flex-start; font-weight: 600; font-size: .85rem; background: var(--on-accent); color: var(--accent); padding: .1rem .6rem; border-radius: 99px; margin-bottom: .4rem; }
+ 
+.free { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; border: 2px solid var(--ink); }
+.free h3 { margin-bottom: .2rem; }
+.sec2 { font-size: clamp(1.7rem, 4vw, 2.3rem); margin: 3.2rem 0 .3rem; }
+.steps { list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+.steps li { counter-increment: s; }
+.steps li::before { content: counter(s); display: block; font-family: "Barlow Condensed", Impact, sans-serif; font-size: 2.6rem; font-weight: 700; line-height: 1; margin-bottom: .3rem; }
+.role { color: var(--muted); font-weight: 600; font-size: .95rem; margin-bottom: .5rem; }
+.band { background: var(--accent); color: var(--on-accent); border-radius: 10px; padding: 1.6rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-top: 3rem; }
+.band h2 { margin: 0 0 .4rem; }
+.band p { margin-top: 0; color: var(--on-accent); }
+.band .btn { background: var(--on-accent); color: var(--accent); border-color: var(--on-accent); }
+.faq { display: grid; gap: .7rem; margin-top: 1.2rem; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.2rem; }
+summary { cursor: pointer; font-weight: 600; }
+.faq details p { margin-top: .6rem; font-size: 1rem; color: var(--muted); }
+.quote { font-size: 1.05rem; }
+.cite { margin-top: .8rem; font-weight: 600; font-size: .9rem; color: var(--muted); }
+/* contact */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; }
+.info { display: grid; gap: 1.1rem; align-content: start; }
+.info b { display: block; }
+form { display: grid; gap: 1rem; }
+label { font-weight: 600; font-size: .95rem; display: grid; gap: .3rem; }
+input, textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: .7rem .8rem; width: 100%; }
+textarea { min-height: 120px; resize: vertical; }
+.ok { background: var(--accent); color: var(--on-accent); padding: .8rem 1rem; border-radius: 6px; font-weight: 600; }
+footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+@media (max-width: 700px) { .split { grid-template-columns: 1fr; } body { font-size: 16px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="#home">Forge<i>Beat</i></a>
+    <ul>
+      <li><a class="link" href="#home" data-view="home" data-t="nav_home"></a></li>
+      <li><a class="link" href="#about" data-view="about" data-t="nav_about"></a></li>
+      <li><a class="link" href="#classes" data-view="classes" data-t="nav_classes"></a></li>
+      <li><a class="link" href="#pricing" data-view="pricing" data-t="nav_pricing"></a></li>
+      <li><a class="link" href="#contact" data-view="contact" data-t="nav_contact"></a></li>
+    </ul>
+    <div class="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ro">RO</button>
+      <button type="button" data-lang="ru">RU</button>
+    </div>
+  </nav>
+ 
+  <main>
+    <section id="view-home" class="hero">
+      <h1 data-t="h_title"></h1>
+      <p data-t="h_sub"></p>
+      <div class="row">
+        <a class="btn" href="#contact" data-t="cta1"></a>
+        <a class="btn ghost" href="#classes" data-t="cta2"></a>
+      </div>
+      <svg class="pulse" viewBox="0 0 1000 90" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 50 H300 L330 50 L350 10 L380 82 L405 30 L425 50 H640 L660 50 L680 22 L702 70 L720 50 H1000"/>
+      </svg>
+      <div class="grid3">
+        <div class="card"><h3 data-t="f1t"></h3><p data-t="f1d"></p></div>
+        <div class="card"><h3 data-t="f2t"></h3><p data-t="f2d"></p></div>
+        <div class="card"><h3 data-t="f3t"></h3><p data-t="f3d"></p></div>
+      </div>
+ 
+      <h2 class="sec2" data-t="hm_next_t"></h2>
+      <div class="grid3" id="homeClasses"></div>
+      <div class="row"><a class="btn ghost" href="#classes" data-t="hm_all"></a></div>
+ 
+      <h2 class="sec2" data-t="hm_who_t"></h2>
+      <div class="grid3" id="who"></div>
+ 
+      <div class="band">
+        <div><h2 data-t="hm_price_t"></h2><p data-t="hm_price_d"></p></div>
+        <a class="btn" href="#pricing" data-t="hm_price_b"></a>
+      </div>
+ 
+      <h2 class="sec2" data-t="hm_rev_t"></h2>
+      <div class="grid3" id="reviews"></div>
+ 
+      <h2 class="sec2" data-t="hm_faq_t"></h2>
+      <div class="faq" id="faq"></div>
+ 
+      <div class="band">
+        <div><h2 data-t="hm_cta_t"></h2><p data-t="hm_cta_d"></p></div>
+        <a class="btn" href="#contact" data-t="hm_cta_b"></a>
+      </div>
+    </section>
+ 
+    <section id="view-about" hidden>
+      <h2 data-t="a_title"></h2>
+      <p data-t="a_p1"></p>
+      <p style="margin-top:1rem" data-t="a_p2"></p>
+      <div class="grid3">
+        <div class="card"><h3 data-t="v1t"></h3><p data-t="v1d"></p></div>
+        <div class="card"><h3 data-t="v2t"></h3><p data-t="v2d"></p></div>
+        <div class="card"><h3 data-t="v3t"></h3><p data-t="v3d"></p></div>
+      </div>
+ 
+      <h2 class="sec2" data-t="a_story_t"></h2>
+      <p data-t="a_story"></p>
+ 
+      <h2 class="sec2" data-t="a_inside_t"></h2>
+      <div class="grid3" id="facilities"></div>
+ 
+      <h2 class="sec2" data-t="a_coach_t"></h2>
+      <p class="muted" data-t="a_coach_s"></p>
+      <div class="grid3" id="coaches"></div>
+ 
+      <h2 class="sec2" data-t="a_how_t"></h2>
+      <ol class="steps" id="steps"></ol>
+    </section>
+ 
+    <section id="view-classes" hidden>
+      <h2 data-t="c_title"></h2>
+      <p class="muted" data-t="c_sub"></p>
+      <div class="tablewrap"><table>
+        <thead><tr><th data-t="th_class"></th><th data-t="th_days"></th><th data-t="th_time"></th><th data-t="th_level"></th></tr></thead>
+        <tbody id="classRows"></tbody>
+      </table></div>
+    </section>
+ 
+    <section id="view-pricing" hidden>
+      <h2 data-t="p_title"></h2>
+      <p class="muted" data-t="p_sub"></p>
+      <div class="card free">
+        <div><h3 data-t="free_t"></h3><p data-t="free_d"></p></div>
+        <a class="btn" href="#contact" data-t="free_btn"></a>
+      </div>
+      <div class="grid3" id="plans"></div>
+    </section>
+ 
+    <section id="view-contact" hidden>
+      <h2 data-t="k_title"></h2>
+      <p class="muted" data-t="k_sub"></p>
+      <div class="split">
+        <div class="info">
+          <div><b data-t="k_addr"></b><span data-t="k_addr_v"></span></div>
+          <div><b data-t="k_phone"></b>+373 22 000 000</div>
+          <div><b>Email</b>hello@forgebeat.example</div>
+          <div><b data-t="k_hours"></b><span data-t="k_hours_v"></span></div>
+        </div>
+        <form id="contactForm">
+          <label><span data-t="k_name"></span><input name="name" required autocomplete="name"></label>
+          <label><span>Email</span><input name="email" type="email" required autocomplete="email"></label>
+          <label><span data-t="k_msg"></span><textarea name="msg" required></textarea></label>
+          <button class="btn" type="submit" data-t="k_send"></button>
+          <div class="ok" id="sent" role="status" hidden data-t="k_sent"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+ 
+  <footer data-t="foot"></footer>
+</div>
+ 
+<script>
+const T = {
+  nav_home: ["Home", "Acasă"], nav_about: ["About", "Despre noi"], nav_classes: ["Classes", "Clase"],
+  nav_pricing: ["Memberships", "Abonamente"], nav_contact: ["Contact", "Contact"],
+  h_title: ["Train to the beat of your own pulse", "Antrenează-te în ritmul propriului puls"],
+  h_sub: ["ForgeBeat is a neighbourhood gym in Chișinău with free weights, group classes and coaches who learn your name.",
+          "ForgeBeat este o sală de sport de cartier în Chișinău, cu greutăți libere, clase de grup și antrenori care îți învață numele."],
+  cta1: ["Book your free first workout", "Rezervă primul antrenament gratuit"], cta2: ["See classes", "Vezi clasele"],
+  f1t: ["Real coaching", "Antrenori reali"],
+  f1d: ["Every new member gets a free intro session and a plan that fits their goals.", "Fiecare membru nou primește o ședință introductivă gratuită și un plan potrivit scopurilor sale."],
+  f2t: ["Open early, close late", "Program lung"],
+  f2d: ["Weekdays 06:00–23:00, weekends 08:00–20:00. Train before work or after it.", "Luni–vineri 06:00–23:00, weekend 08:00–20:00. Antrenează-te înainte sau după serviciu."],
+  f3t: ["No lock-in", "Fără obligații"],
+  f3d: ["Monthly plans you can pause or cancel at any time.", "Abonamente lunare pe care le poți pune pe pauză sau anula oricând."],
+  a_title: ["About ForgeBeat", "Despre ForgeBeat"],
+  a_p1: ["The name says it: we forge strength and we keep the beat of your heart. We built the gym around both, with heavy lifting and honest cardio in one clean, unhurried space.",
+         "Numele spune totul: ne forjăm forța și ținem ritmul inimii tale. Am construit sala în jurul amândurora, cu ridicări grele și cardio onest într-un spațiu curat și liniștit."],
+  a_p2: ["Our coaches are certified and they stay on the floor, not behind a desk. Ask for a form check whenever you like.",
+         "Antrenorii noștri sunt certificați și stau în sală, nu în spatele unui birou. Poți cere oricând o corectare a tehnicii."],
+  v1t: ["Safety first", "Siguranța înainte de toate"], v1d: ["Technique before weight, always.", "Tehnica înainte de greutate, mereu."],
+  v2t: ["Everyone is welcome", "Toți sunt bineveniți"], v2d: ["Beginners and athletes train side by side.", "Începătorii și sportivii se antrenează alături."],
+  v3t: ["Clean and calm", "Curat și liniștit"], v3d: ["Equipment is sanitised daily and the music stays at a sensible volume.", "Echipamentele sunt dezinfectate zilnic, iar muzica rămâne la un volum rezonabil."],
+  a_story_t: ["Our story", "Povestea noastră"],
+  a_story: ["ForgeBeat opened in 2019 in a former metalworking workshop in Chișinău, which is where the name comes from. We kept the high ceilings and the brick walls and filled the space with new equipment. Today our members are aged 12 to 70, and many of them started with us as complete beginners.",
+            "ForgeBeat a apărut în 2019, într-un fost atelier de prelucrare a metalului din Chișinău, de aici și numele. Am păstrat tavanele înalte și pereții de cărămidă și am umplut spațiul cu echipamente noi. Azi membrii noștri au între 12 și 70 de ani, iar mulți dintre ei au început la noi fără nicio experiență."],
+  a_inside_t: ["What you’ll find inside", "Ce găsești în sală"],
+  a_coach_t: ["Meet the coaches", "Cunoaște antrenorii"],
+  a_coach_s: ["All of our coaches hold recognised certifications and first-aid training.", "Toți antrenorii noștri au certificări recunoscute și pregătire de prim ajutor."],
+  a_how_t: ["How we work with you", "Cum lucrăm cu tine"],
+  c_title: ["Weekly classes", "Clase săptămânale"],
+  c_sub: ["Classes are included in Plus and Pro. Groups are limited to 15 people.", "Clasele sunt incluse în Plus și Pro. Grupele sunt limitate la 15 persoane."],
+  th_class: ["Class", "Clasa"], th_days: ["Days", "Zile"], th_time: ["Time", "Ora"], th_level: ["Level", "Nivel"],
+  p_title: ["Memberships", "Abonamente"], p_sub: ["Example prices, in MDL per month. Juniors (12–17) get a much lower price.", "Prețuri exemplu, în MDL pe lună. Juniorii (12–17 ani) au un preț mult mai mic."],
+  pop: ["Most popular", "Cel mai ales"], choose: ["Choose plan", "Alege abonamentul"], mo: ["/ month", "/ lună"],
+  free_t: ["Your first workout is free", "Primul antrenament este gratuit"],
+  free_d: ["Come in, try the gym and meet a coach. No payment and no card needed.", "Vino, încearcă sala și cunoaște un antrenor. Fără plată și fără card."],
+  free_btn: ["Book my free workout", "Rezervă antrenamentul gratuit"],
+  k_title: ["Contact", "Contact"], k_sub: ["Book a free visit or ask us anything.", "Rezervă o vizită gratuită sau întreabă-ne orice."],
+  k_addr: ["Address", "Adresă"], k_addr_v: ["10 Example St., Chișinău", "Str. Exemplu 10, Chișinău"],
+  k_phone: ["Phone", "Telefon"], k_hours: ["Opening hours", "Program"],
+  k_hours_v: ["Mon–Fri 06:00–23:00, Sat–Sun 08:00–20:00", "Lun–Vin 06:00–23:00, Sâm–Dum 08:00–20:00"],
+  k_name: ["Your name", "Numele tău"], k_msg: ["Message", "Mesaj"], k_send: ["Send message", "Trimite mesajul"],
+  k_sent: ["Thank you! We will reply within one day.", "Mulțumim! Îți răspundem în cel mult o zi."],
+  foot: ["© ForgeBeat Gym. Demo content: details and prices are examples.", "© ForgeBeat Gym. Conținut demonstrativ: datele și prețurile sunt exemple."]
+};
+ 
+const D = { mon: ["Mon", "Lun"], tue: ["Tue", "Mar"], wed: ["Wed", "Mie"], thu: ["Thu", "Joi"], fri: ["Fri", "Vin"], sat: ["Sat", "Sâm"], sun: ["Sun", "Dum"] };
+const LV = { b: ["Beginner", "Începător"], a: ["All levels", "Toate nivelurile"], i: ["Intermediate", "Intermediar"] };
+const classes = [
+  { n: ["Strength Basics", "Bazele forței"], d: ["mon", "wed"], t: "18:00", l: "b" },
+  { n: ["HIIT 30", "HIIT 30"], d: ["tue", "thu"], t: "07:00", l: "a" },
+  { n: ["Spinning", "Spinning"], d: ["mon", "fri"], t: "19:00", l: "a" },
+  { n: ["Boxing Fit", "Box fitness"], d: ["wed"], t: "20:00", l: "i" },
+  { n: ["Yoga Flow", "Yoga Flow"], d: ["sat"], t: "10:00", l: "a" },
+  { n: ["Mobility", "Mobilitate"], d: ["sun"], t: "11:00", l: "b" }
+];
+const plans = [
+  { n: "Junior", p: 450, tag: ["Ages 12–17", "12–17 ani"], f: [["Gym floor, coach supervised", "Sală, sub supravegherea antrenorului"], ["Junior-friendly classes", "Clase potrivite pentru juniori"], ["Parent’s consent required", "Cu acordul părintelui"]] },
+  { n: "Basic", p: 600, f: [["Gym floor access", "Acces în sala de forță"], ["Free weights and machines", "Greutăți libere și aparate"], ["Locker room", "Vestiar"]] },
+  { n: "Plus", p: 800, pop: true, tag: ["Most popular", "Cel mai ales"], f: [["Everything in Basic", "Tot ce include Basic"], ["All group classes", "Toate clasele de grup"], ["1 coaching session", "O ședință cu antrenor"]] },
+  { n: "Pro", p: 1500, f: [["Everything in Plus", "Tot ce include Plus"], ["4 coaching sessions", "4 ședințe cu antrenor"], ["Nutrition plan", "Plan de nutriție"]] }
+];
+ 
+const facilities = [
+  { n: ["Free-weight zone", "Zona de greutăți libere"], d: ["Racks, lifting platforms, dumbbells up to 50 kg and bars for every level.", "Rack-uri, platforme de ridicat, gantere până la 50 kg și bare pentru orice nivel."] },
+  { n: ["Cardio area", "Zona de cardio"], d: ["Treadmills, bikes, rowers and cross trainers, always cleaned between users.", "Benzi de alergare, biciclete, aparate de vâslit și eliptice, curățate între utilizatori."] },
+  { n: ["Functional space", "Spațiu funcțional"], d: ["Open turf with kettlebells, ropes, plyo boxes and sleds.", "Gazon sintetic cu kettlebell-uri, frânghii, cutii pliometrice și sănii de împins."] },
+  { n: ["Group studio", "Studio pentru clase"], d: ["A separate room for classes, with mats, mirrors and a sound system.", "O sală separată pentru clase, cu saltele, oglinzi și sonorizare."] },
+  { n: ["Locker rooms", "Vestiare"], d: ["Showers, lockers and hairdryers, cleaned several times a day.", "Dușuri, dulapuri și uscătoare de păr, curățate de mai multe ori pe zi."] },
+  { n: ["Recovery corner", "Colț de recuperare"], d: ["Foam rollers, a stretching area and a free water station.", "Role de masaj, zonă de stretching și apă gratuită."] }
+];
+const coaches = [
+  { n: "Andrei Rusu", r: ["Strength and powerlifting", "Forță și powerlifting"], d: ["10 years of coaching. Will fix your squat in one session.", "10 ani de antrenorat. Îți corectează genuflexiunea într-o singură ședință."] },
+  { n: "Elena Munteanu", r: ["HIIT, yoga and mobility", "HIIT, yoga și mobilitate"], d: ["8 years of experience. Leads our morning HIIT and weekend yoga.", "8 ani de experiență. Conduce HIIT-ul de dimineață și yoga de weekend."] },
+  { n: "Victor Ciobanu", r: ["Boxing and junior training", "Box și antrenament pentru juniori"], d: ["Former amateur boxer. Runs the Junior programme.", "Fost boxer amator. Conduce programul pentru juniori."] }
+];
+const steps = [
+  { n: ["Intro session", "Ședință introductivă"], d: ["We talk about your goals, health and weekly schedule. It is free for every new member.", "Discutăm despre scopurile tale, sănătate și program. Este gratuită pentru orice membru nou."] },
+  { n: ["Your plan", "Planul tău"], d: ["You get a written plan for your first four weeks, adjusted as you progress.", "Primești un plan scris pentru primele patru săptămâni, ajustat pe parcurs."] },
+  { n: ["Monthly check-in", "Verificare lunară"], d: ["A short review of your progress every month, at no extra cost.", "O scurtă evaluare a progresului în fiecare lună, fără cost suplimentar."] }
+];
+const RU = {
+  nav_home: "Главная", nav_about: "О нас", nav_classes: "Занятия", nav_pricing: "Абонементы", nav_contact: "Контакты",
+  h_title: "Тренируйся в ритме собственного пульса",
+  h_sub: "ForgeBeat — районный спортзал в Кишинёве со свободными весами, групповыми занятиями и тренерами, которые знают тебя по имени.",
+  cta1: "Записаться на бесплатную первую тренировку", cta2: "Смотреть занятия",
+  f1t: "Настоящие тренеры", f1d: "Каждый новый участник получает бесплатное вводное занятие и план под свои цели.",
+  f2t: "Удобный график", f2d: "Пн–Пт 06:00–23:00, Сб–Вс 08:00–20:00. Тренируйся до работы или после неё.",
+  f3t: "Без обязательств", f3d: "Месячные абонементы можно поставить на паузу или отменить в любой момент.",
+  a_title: "О ForgeBeat",
+  a_p1: "Название говорит само за себя: мы куём силу и держим ритм твоего сердца. Мы построили зал вокруг обоих: тяжёлые базовые упражнения и честное кардио в одном чистом, спокойном пространстве.",
+  a_p2: "Наши тренеры сертифицированы и находятся в зале, а не за столом. Попроси проверить технику в любой момент.",
+  v1t: "Безопасность прежде всего", v1d: "Сначала техника, потом вес. Всегда.",
+  v2t: "Рады всем", v2d: "Новички и спортсмены тренируются рядом.",
+  v3t: "Чисто и спокойно", v3d: "Оборудование дезинфицируется ежедневно, а музыка играет на разумной громкости.",
+  c_title: "Занятия на неделе", c_sub: "Занятия входят в Plus и Pro. В группе не больше 15 человек.",
+  th_class: "Занятие", th_days: "Дни", th_time: "Время", th_level: "Уровень",
+  p_title: "Абонементы", p_sub: "Примерные цены в леях (MDL) в месяц. Для подростков 12–17 лет цена намного ниже.",
+  pop: "Самый популярный", choose: "Выбрать абонемент", mo: "/ мес.",
+  free_t: "Первая тренировка бесплатно", free_d: "Приходи, попробуй зал и познакомься с тренером. Без оплаты и без карты.", free_btn: "Записаться на бесплатную тренировку",
+  k_title: "Контакты", k_sub: "Запишись на бесплатное посещение или задай любой вопрос.",
+  k_addr: "Адрес", k_addr_v: "ул. Пример, 10, Кишинёв", k_phone: "Телефон", k_hours: "Часы работы",
+  k_hours_v: "Пн–Пт 06:00–23:00, Сб–Вс 08:00–20:00",
+  k_name: "Твоё имя", k_msg: "Сообщение", k_send: "Отправить сообщение", k_sent: "Спасибо! Мы ответим в течение одного дня.",
+  foot: "© ForgeBeat Gym. Демонстрационный контент: данные и цены — примеры.",
+  a_story_t: "Наша история",
+  a_story: "ForgeBeat открылся в 2019 году в бывшей металлообрабатывающей мастерской в Кишинёве — отсюда и название. Мы сохранили высокие потолки и кирпичные стены и наполнили пространство новым оборудованием. Сегодня нашим участникам от 12 до 70 лет, и многие из них начинали с нуля.",
+  a_inside_t: "Что тебя ждёт в зале", a_coach_t: "Познакомься с тренерами",
+  a_coach_s: "Все наши тренеры имеют признанные сертификаты и подготовку по оказанию первой помощи.",
+  a_how_t: "Как мы работаем с тобой"
+};
+Object.keys(RU).forEach(k => { T[k][2] = RU[k]; });
+const RUD = { mon: "Пн", tue: "Вт", wed: "Ср", thu: "Чт", fri: "Пт", sat: "Сб", sun: "Вс" };
+Object.keys(RUD).forEach(k => { D[k][2] = RUD[k]; });
+const RULV = { b: "Начинающий", a: "Все уровни", i: "Средний" };
+Object.keys(RULV).forEach(k => { LV[k][2] = RULV[k]; });
+["Основы силы", "HIIT 30", "Спиннинг", "Фитнес-бокс", "Йога-флоу", "Мобильность"].forEach((x, j) => { classes[j].n[2] = x; });
+const RUP = [
+  { tag: "12–17 лет", f: ["Зал под присмотром тренера", "Занятия для подростков", "Нужно согласие родителей"] },
+  { f: ["Доступ в зал", "Свободные веса и тренажёры", "Раздевалка"] },
+  { tag: "Самый популярный", f: ["Всё из Basic", "Все групповые занятия", "1 тренировка с тренером"] },
+  { f: ["Всё из Plus", "4 тренировки с тренером", "План питания"] }
+];
+RUP.forEach((r, j) => { if (r.tag) plans[j].tag[2] = r.tag; r.f.forEach((x, k) => { plans[j].f[k][2] = x; }); });
+const RUF = [
+  ["Зона свободных весов", "Стойки, помосты, гантели до 50 кг и грифы для любого уровня."],
+  ["Кардиозона", "Беговые дорожки, велотренажёры, гребные тренажёры и эллипсы, которые протираются после каждого занимающегося."],
+  ["Функциональная зона", "Открытое покрытие с гирями, канатами, плиометрическими боксами и санями."],
+  ["Студия для занятий", "Отдельный зал для занятий с ковриками, зеркалами и звуком."],
+  ["Раздевалки", "Душевые, шкафчики и фены, убираются несколько раз в день."],
+  ["Зона восстановления", "Массажные ролики, место для растяжки и бесплатная вода."]
+];
+facilities.forEach((f, j) => { f.n[2] = RUF[j][0]; f.d[2] = RUF[j][1]; });
+const RUC = [
+  ["Сила и пауэрлифтинг", "10 лет тренерской работы. Исправит твой присед за одно занятие."],
+  ["HIIT, йога и мобильность", "8 лет опыта. Ведёт утренний HIIT и йогу по выходным."],
+  ["Бокс и тренировки для подростков", "Бывший боксёр-любитель. Ведёт программу для подростков."]
+];
+coaches.forEach((c, j) => { c.r[2] = RUC[j][0]; c.d[2] = RUC[j][1]; });
+const RUS = [
+  ["Вводное занятие", "Мы обсуждаем твои цели, здоровье и расписание. Бесплатно для каждого нового участника."],
+  ["Твой план", "Ты получаешь письменный план на первые четыре недели, который корректируется по мере прогресса."],
+  ["Ежемесячная проверка", "Короткий разбор твоего прогресса каждый месяц без дополнительной платы."]
+];
+steps.forEach((s, j) => { s.n[2] = RUS[j][0]; s.d[2] = RUS[j][1]; });
+ 
+Object.assign(T, {
+  hm_next_t: ["This week’s classes", "Clasele acestei săptămâni", "Занятия этой недели"],
+  hm_all: ["See the full schedule", "Vezi tot orarul", "Смотреть всё расписание"],
+  hm_who_t: ["Who trains here", "Cine se antrenează la noi", "Кто тренируется у нас"],
+  hm_price_t: ["Memberships from 200 MDL a month", "Abonamente de la 200 MDL pe lună", "Абонементы от 200 MDL в месяц"],
+  hm_price_d: ["Your first workout is free, juniors (12–17) pay the least, and you can cancel at any time.", "Primul antrenament este gratuit, juniorii (12–17 ani) plătesc cel mai puțin, iar abonamentul se poate anula oricând.", "Первая тренировка бесплатна, подростки (12–17 лет) платят меньше всех, а абонемент можно отменить в любой момент."],
+  hm_price_b: ["See memberships", "Vezi abonamentele", "Смотреть абонементы"],
+  hm_rev_t: ["What members say", "Ce spun membrii", "Что говорят участники"],
+  hm_faq_t: ["Good to know", "Bine de știut", "Полезно знать"],
+  hm_cta_t: ["Ready to start?", "Gata să înepi?", "Готов начать?"],
+  hm_cta_d: ["Book your free first workout and meet a coach. It takes one minute.", "Rezervă primul antrenament gratuit și cunoaște un antrenor. Durează un minut.", "Запишись на бесплатную первую тренировку и познакомься с тренером. Это займёт минуту."],
+  hm_cta_b: ["Book now", "Rezervă acum", "Записаться"]
+});
+const who = [
+  { n: ["Complete beginners", "Începători absoluți", "Совсем новички"], d: ["Start with a coach, learn the basics and never feel lost on the gym floor.", "Începe cu un antrenor, învață bazele și nu te simți pierdut în sală.", "Начни с тренером, освой основы и не чувствуй себя потерянным в зале."] },
+  { n: ["Strength lovers", "Pasionați de forță", "Любители силовых"], d: ["Racks, platforms and heavy dumbbells, with space to lift without waiting.", "Rack-uri, platforme și gantere grele, cu loc de ridicat fără așteptare.", "Стойки, помосты и тяжёлые гантели — есть где работать без очереди."] },
+  { n: ["Teens and parents", "Adolescenți și părinți", "Подростки и родители"], d: ["A supervised, affordable Junior plan for ages 12–17, with a parent’s consent.", "Un abonament Junior supravegheat și accesibil pentru 12–17 ani, cu acordul părintelui.", "Недорогой абонемент Junior под присмотром тренера для 12–17 лет, с согласия родителей."] }
+];
+const reviews = [
+  { q: ["I had never touched a barbell. After the intro session I knew exactly what to do.", "Nu atinsesem niciodată o bară. După ședința introductivă știam exact ce am de făcut.", "Я ни разу не держал штангу. После вводного занятия я точно знал, что делать."], n: ["Maria, 29", "Maria, 29", "Мария, 29"] },
+  { q: ["Quiet, clean, and the coaches really watch your form. The morning HIIT is my favourite.", "Liniștit, curat, iar antrenorii chiar îți urmăresc tehnica. HIIT-ul de dimineață e preferatul meu.", "Тихо, чисто, а тренеры действительно следят за техникой. Утренний HIIT — мой любимый."], n: ["Alexandru, 34", "Alexandru, 34", "Александр, 34"] },
+  { q: ["My son joined the Junior plan and now asks to go more often than I expected.", "Fiul meu s-a înscris la abonamentul Junior și cere să meargă mai des decât mă așteptam.", "Мой сын записался на Junior и теперь просит ходить чаще, чем я ожидал."], n: ["Ion, parent", "Ion, părinte", "Ион, родитель"] }
+];
+const faq = [
+  { q: ["Do I need experience?", "Am nevoie de experiență?", "Нужен ли опыт?"], a: ["No. Beginners are welcome and your intro session is free.", "Nu. Începătorii sunt bineveniți, iar ședința introductivă este gratuită.", "Нет. Новичкам мы рады, а вводное занятие бесплатно."] },
+  { q: ["What should I bring?", "Ce să iau cu mine?", "Что взять с собой?"], a: ["Sports shoes, a towel and a bottle of water. Lockers are free to use.", "Încălțăminte sport, un prosop și o sticlă cu apă. Dulapurile sunt gratuite.", "Спортивную обувь, полотенце и бутылку воды. Шкафчики бесплатные."] },
+  { q: ["Can I pause my membership?", "Pot pune abonamentul pe pauză?", "Можно ли заморозить абонемент?"], a: ["Yes. Pause it for up to 30 days, for example when you travel or are ill.", "Da. Îl poți pune pe pauză până la 30 de zile, de exemplu când călătorești sau ești bolnav.", "Да. Его можно заморозить до 30 дней, например в поездке или при болезни."] },
+  { q: ["Is there a minimum age?", "Există o vârstă minimă?", "Есть ли минимальный возраст?"], a: ["From 12 years old with the Junior plan and a parent’s written consent.", "De la 12 ani, cu abonamentul Junior și acordul scris al unui părinte.", "С 12 лет по абонементу Junior и с письменного согласия родителя."] }
+];
+const QM = [["“", "”"], ["„", "”"], ["«", "»"]];
+ 
+const $ = id => document.getElementById(id);
+const views = ["home", "about", "classes", "pricing", "contact"];
+let lang = "en";
+try {
+  const saved = localStorage.getItem("lang");
+  const nav = (navigator.language || "").toLowerCase();
+  lang = ["en", "ro", "ru"].includes(saved) ? saved : (nav.startsWith("ro") ? "ro" : nav.startsWith("ru") ? "ru" : "en");
+} catch (e) {}
+const L = { en: 0, ro: 1, ru: 2 };
+const i = () => L[lang];
+ 
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-t]").forEach(el => { el.textContent = T[el.dataset.t][i()]; });
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  $("classRows").innerHTML = classes.map(c => `<tr><td>${c.n[i()]}</td><td>${c.d.map(k => D[k][i()]).join(", ")}</td><td>${c.t}</td><td>${LV[c.l][i()]}</td></tr>`).join("");
+  $("plans").innerHTML = plans.map(p => `
+    <article class="card plan${p.pop ? " pop" : ""}">
+      ${p.tag ? `<span class="tag">${p.tag[i()]}</span>` : ""}
+      <h3>${p.n}</h3>
+      <div class="price">${p.p} <span class="per">MDL ${T.mo[i()]}</span></div>
+      <ul>${p.f.map(x => `<li>${x[i()]}</li>`).join("")}</ul>
+      <a class="btn" href="#contact">${T.choose[i()]}</a>
+    </article>`).join("");
+  $("facilities").innerHTML = facilities.map(f => `<div class="card"><h3>${f.n[i()]}</h3><p>${f.d[i()]}</p></div>`).join("");
+  $("coaches").innerHTML = coaches.map(c => `<div class="card"><h3>${c.n}</h3><div class="role">${c.r[i()]}</div><p>${c.d[i()]}</p></div>`).join("");
+  $("steps").innerHTML = steps.map(s => `<li class="card"><h3>${s.n[i()]}</h3><p>${s.d[i()]}</p></li>`).join("");
+  $("homeClasses").innerHTML = classes.slice(0, 3).map(c => `<div class="card"><h3>${c.n[i()]}</h3><div class="role">${c.d.map(k => D[k][i()]).join(", ")}, ${c.t}</div><p>${LV[c.l][i()]}</p></div>`).join("");
+  $("who").innerHTML = who.map(w => `<div class="card"><h3>${w.n[i()]}</h3><p>${w.d[i()]}</p></div>`).join("");
+  $("reviews").innerHTML = reviews.map(r => `<figure class="card"><blockquote class="quote">${QM[i()][0]}${r.q[i()]}${QM[i()][1]}</blockquote><figcaption class="cite">${r.n[i()]}</figcaption></figure>`).join("");
+  $("faq").innerHTML = faq.map(f => `<details><summary>${f.q[i()]}</summary><p>${f.a[i()]}</p></details>`).join("");
+}
+ 
+function show(view) {
+  views.forEach(v => { $("view-" + v).hidden = v !== view; });
+  document.querySelectorAll("[data-view]").forEach(a => {
+    if (a.dataset.view === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  window.scrollTo(0, 0);
+}
+const fromHash = () => { const h = location.hash.slice(1); return views.includes(h) ? h : "home"; };
+window.addEventListener("hashchange", () => show(fromHash()));
+ 
+document.querySelector(".langs").addEventListener("click", e => {
+  const b = e.target.closest("[data-lang]");
+  if (!b) return;
+  lang = b.dataset.lang;
+  try { localStorage.setItem("lang", lang); } catch (err) {}
+  applyLang();
+});
+$("contactForm").addEventListener("submit", e => {
+  e.preventDefault();
+  e.target.reset();
+  $("sent").hidden = false;
+});
+ 
+applyLang();
+show(fromHash());
+</script>
+</body>
+</html>
